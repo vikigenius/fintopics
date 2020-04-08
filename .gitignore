@@ -214,4 +214,4 @@ crashlytics-build.properties
 fabric.properties
 
 # DATA PATHS
-data/
+/data/
