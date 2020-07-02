@@ -16,22 +16,33 @@ Deep Learning for Financial Topic Modeling
 
 
 ## Installation
+We use [poetry](https://python-poetry.org/) for dependency management. Install it from [here](https://github.com/python-poetry/poetry#installation).
+Then install the dependencies using.
+
 
 ```bash
-pip install fintopics
+poetry install fintopics
 ```
 
 
-## Example
+## Usage
 
-Showcase how your project can be used:
+You can access the help by using the command
 
-```python
-from fintopics.example import some_function
-
-print(some_function(3, 4))
-# => 7
+```bash
+fintopics --help
 ```
+
+You can prepare the dataset using the following commands:
+
+```bash
+# To prepare text data using 100 financial documents
+fintopics prepare text --file_limit=100 
+
+# To prepare matrix data using 100 financial documents
+fintopics prepare scamat --file_limit=100 
+```
+The settings can be configured in fintopics.toml file.
 
 ## License
 
