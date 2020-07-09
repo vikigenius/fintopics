@@ -23,8 +23,9 @@ def main(verbosity: int):
 
 @click.argument('corpus', type=click.Choice(['text', 'scmat']))
 @click.option('--file_limit', default=10)
+@click.option('--label', default="false")
 @main.command()
-def prepare(corpus, file_limit):
+def prepare(corpus, file_limit, label):
     """
     Command to preprocess the data.
 
@@ -33,11 +34,11 @@ def prepare(corpus, file_limit):
         file_limit (str): The number of files to limit the pipeline
     """
     config['data']['file_limit'] = file_limit
+    config['data']['label'] = label
     if corpus == 'text':
         asyncio.run(TextCorpusPipeline.prepare_data())
     elif corpus == 'scmat':
         prepare_bow_matrix()
-
 
 if __name__ == '__main__':
     sys.exit(main())  # pragma: no cover

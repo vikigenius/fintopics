@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from fintopics.data.pipeline import Pipeline
-
+from fintopics import config
+import re
 
 class DocumentPipeline(Pipeline):
     """Pipeline that cleans documents using regex."""
@@ -20,4 +21,15 @@ class DocumentPipeline(Pipeline):
         """
         data_stream['text'] = data_stream['text'].split('\n\n')
         data_stream['text'] = [doc.replace('\n', '') for doc in data_stream['text']]
+
+        if config['data']['label'].lower() == "true":
+            current_label = "none"
+            data_stream["label"] = []
+            for line in data_stream["text"]:
+                if line.strip() != "" and all(ch.isdigit() or ch.isupper() or ch == " " or ch == "\t" for ch in line):
+                    current_label = (re.sub(r'\d+', '', line)).lower()
+                    if current_label.strip() == "":
+                        current_label = "none"
+                data_stream["label"].append(current_label)
+
         return data_stream
