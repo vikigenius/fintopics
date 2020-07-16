@@ -64,6 +64,10 @@ class ReadFilePipeline(Pipeline):
                 }
         """
         result_stream = {'split': self._sort_document(), 'path': data_stream}
+        annotations = {}
+        if config['data']['annotations_path']:
+            with open(config['data']['annotations_path']) as f:
+                annotations = json.load(f)
 
         if config["data"]["file_type"] == 'txt':
             with open(data_stream, encoding='utf-8', mode='r') as data_file:
@@ -80,7 +84,12 @@ class ReadFilePipeline(Pipeline):
                     if 'offsets' in obj and 'text' in obj['offsets'][0]:
                         result_stream['text'] += obj['offsets'][0]['text'] + '\n\n'
                         if config['data']['label'].lower() == "true":
-                            result_stream['label'].append(obj['classId'])  # TODO: map this to label
+                            label = ''
+                            if obj['classId'] not in annotations:
+                                label = 'none'
+                            else:
+                                label = annotations[obj['classId']]
+                            result_stream['label'].append(label)  # TODO: map this to label
         
         self._seed += 1
         return result_stream

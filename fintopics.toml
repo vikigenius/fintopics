@@ -4,6 +4,7 @@ title="Configuration"
 
 [data]
 doc_path = 'data\raw\Ark\ann.json\master\pool'
+annotations_path = 'data\raw\Ark\annotations-legend.json'
 file_type = 'json'
 gensim_dictionary_path = 'data/interim/bowdict.gensim'
 file_limit = 100

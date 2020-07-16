@@ -94,8 +94,6 @@ class TextCorpusPipeline(Pipeline):
 
             save_path_label = Path(config['data']['save_path']) / '{0}_label.txt'.format(split)
             save_path_label.open(mode=mode).write('{0}\n'.format(label_output))
-            if len(data_text.split("\n")) != len(label_output.split('\n')):
-                print()
 
             save_path.open(mode=mode).write('{0}\n'.format(data_text))
             self.splits.add(split)
