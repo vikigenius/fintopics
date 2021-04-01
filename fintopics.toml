@@ -7,7 +7,7 @@ doc_path = 'data/raw/EDGAR/2016'
 gensim_dictionary_path = 'data/interim/bowdict.gensim'
 file_limit = 100
 req_str = '10-K-A'
-save_path = 'data/processed/'
+save_path = 'data/processed'
 [data.split]
 train = 0.8
 valid = 0.1
