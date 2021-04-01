@@ -8,13 +8,16 @@ from sklearn.feature_extraction.text import CountVectorizer
 from fintopics import config
 
 
-def prepare_bow_matrix() -> None:
+def prepare_bow_matrix(labeled) -> None:
     """Function to prepare the BOW matrix."""
     savedir = Path(config['data']['save_path'])
-
     cvect = CountVectorizer(strip_accents='ascii', min_df=2)
 
-    train_dbyw = cvect.fit_transform(
+    cvect.fit((savedir / 'train.txt').read_text().splitlines())
+    if labeled:
+        savedir = savedir / 'labeled'
+
+    train_dbyw = cvect.transform(
         (savedir / 'train.txt').read_text().splitlines(),
     )
     valid_dbyw = cvect.transform(
