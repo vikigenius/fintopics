@@ -77,13 +77,35 @@ class TextCorpusPipeline(Pipeline):
             data_stream (:obj:`dict`): A dict with the key "text" containing a list of
                 lists with tokenised words that need to be processed
         """
-        data_texts = filter(
-            lambda doc_words: len(doc_words) > self.min_length,
-            data_stream['text'],
-        )
-        data_text = '\n'.join(' '.join(doc_words) for doc_words in data_texts)
-        split = data_stream['split']
-        save_path = Path(config['data']['save_path']) / '{0}.txt'.format(split)
-        mode = 'a' if split in self.splits else 'w'
-        save_path.open(mode=mode).write('{0}\n'.format(data_text))
-        self.splits.add(split)
+        if config['data']['label'].lower() == "true":
+            data_texts = []
+            labels = []
+
+            for i in range(len(data_stream['text'])):
+                if len(data_stream['text'][i]) > 5:
+                    data_texts.append(data_stream['text'][i])
+                    labels.append(data_stream['label'][i])
+            label_output = '\n'.join(''.join(label.lstrip()) for label in labels)
+
+            data_text = '\n'.join(' '.join(doc_words) for doc_words in data_texts)
+            split = data_stream['split']
+            save_path = Path(config['data']['save_path']) / '{0}.txt'.format(split)
+            mode = 'a' if split in self.splits else 'w'
+
+            save_path_label = Path(config['data']['save_path']) / '{0}_label.txt'.format(split)
+            save_path_label.open(mode=mode).write('{0}\n'.format(label_output))
+
+            save_path.open(mode=mode).write('{0}\n'.format(data_text))
+            self.splits.add(split)
+
+        else:
+            data_texts = filter(
+                lambda doc_words: len(doc_words) > self.min_length,
+                data_stream['text'],
+            )
+            data_text = '\n'.join(' '.join(doc_words) for doc_words in data_texts)
+            split = data_stream['split']
+            save_path = Path(config['data']['save_path']) / '{0}.txt'.format(split)
+            mode = 'a' if split in self.splits else 'w'
+            save_path.open(mode=mode).write('{0}\n'.format(data_text))
+            self.splits.add(split)

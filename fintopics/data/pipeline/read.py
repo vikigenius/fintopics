@@ -3,11 +3,12 @@
 """Contains the ReadFilePipeline class for reading text files."""
 
 import random
+import json
 from typing import Dict, Generator, Optional
 
 from fintopics.data import get_file_list
 from fintopics.data.pipeline import Pipeline
-
+from fintopics import config
 
 def get_input_stream() -> Generator[str, None, None]:
     """An input stream for the pipeline."""
@@ -63,8 +64,33 @@ class ReadFilePipeline(Pipeline):
                 }
         """
         result_stream = {'split': self._sort_document(), 'path': data_stream}
-        with open(data_stream, encoding='utf-8', mode='r') as data_file:
-            result_stream['text'] = data_file.read()
+        annotations = {}
+        if config['data']['annotations_path']:
+            with open(config['data']['annotations_path']) as f:
+                annotations = json.load(f)
+
+        if config["data"]["file_type"] == 'txt':
+            with open(data_stream, encoding='utf-8', mode='r') as data_file:
+                result_stream['text'] = data_file.read()
+        else: #json
+            if 'text' not in result_stream:
+                result_stream['text'] = ''
+            if 'label' not in result_stream:
+                result_stream['label'] = []
+
+            with open(data_stream, encoding='utf-8', mode='r') as data_file:
+                file_ = json.load(data_file)
+                for obj in file_['entities']:
+                    if 'offsets' in obj and 'text' in obj['offsets'][0]:
+                        result_stream['text'] += obj['offsets'][0]['text'] + '\n\n'
+                        if config['data']['label'].lower() == "true":
+                            label = ''
+                            if obj['classId'] not in annotations:
+                                label = 'none'
+                            else:
+                                label = annotations[obj['classId']]
+                            result_stream['label'].append(label)  # TODO: map this to label
+        
         self._seed += 1
         return result_stream
 
